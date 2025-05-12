@@ -1,6 +1,6 @@
 /* pimoroni_pim447.c - Driver for Pimoroni PIM447 Trackball */
 
-#define DT_DRV_COMPAT zmk_pimoroni_pim447
+#define DT_DRV_COMPAT pimoroni_pim447
 
 #include <zephyr/device.h>
 #include <zephyr/input/input.h>
@@ -14,7 +14,7 @@
 #include "pimoroni_pim447.h"
 #include "pimoroni_pim447_led.h"  // For function declarations
 
-LOG_MODULE_REGISTER(zmk_pimoroni_pim447, LOG_LEVEL_DBG);
+LOG_MODULE_REGISTER(pimoroni_pim447, LOG_LEVEL_DBG);
 
 volatile uint8_t PIM447_MOUSE_MAX_SPEED = 25;
 volatile uint8_t PIM447_MOUSE_MAX_TIME = 5;
