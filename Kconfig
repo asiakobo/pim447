@@ -14,12 +14,5 @@ if ZMK_PIMORONI_PIM447
     int "Amount of milliseconds the mouse layer will be active after using the trackball"
     default 400
 
-  config ZMK_PIM447_BEHAVIORS
-    bool "Enable Pimoroni PIM447 Trackball Actions behavior"
-    depends on ZMK_PIMORONI_PIM447
-    select ZMK_BEHAVIORS
-    default y
-    help
-      Enable Pimoroni PIM447 Trackball behaviors.
 
 endif # ZMK_PIMORONI_PIM447
