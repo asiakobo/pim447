@@ -35,11 +35,26 @@ static enum pim447_mode current_mode = PIM447_MODE_MOUSE;
 /* Forward declaration of functions */
 static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
 static int pimoroni_pim447_enable_interrupt(const struct pimoroni_pim447_config *config, bool enable);
-static void activate_automouse_layer();
-static void deactivate_automouse_layer(struct k_timer *timer);
 
 static int previous_x = 0;
 static int previous_y = 0;
+
+#define AUTOMOUSE_LAYER (DT_PROP(DT_DRV_INST(0), automouse_layer))
+#if AUTOMOUSE_LAYER > 0
+    struct k_timer automouse_layer_timer;
+    static bool automouse_triggered = false;
+    static void activate_automouse_layer() {
+        automouse_triggered = true;
+        zmk_keymap_layer_activate(AUTOMOUSE_LAYER);
+        k_timer_start(&automouse_layer_timer, K_MSEC(CONFIG_ZMK_PIMORONI_PIM447_AUTOMOUSE_TIMEOUT_MS), K_NO_WAIT);
+    }
+
+    static void deactivate_automouse_layer(struct k_timer *timer) {
+        automouse_triggered = false;
+        zmk_keymap_layer_deactivate(AUTOMOUSE_LAYER);
+    }
+    K_TIMER_DEFINE(automouse_layer_timer, deactivate_automouse_layer, NULL);
+#endif
 
 void pim447_enable_sleep(const struct device *dev) {
     struct pimoroni_pim447_data *data = dev->data;
@@ -468,24 +483,7 @@ static int pimoroni_pim447_init(const struct device *dev) {
     return 0;
 }
 
-#define AUTOMOUSE_LAYER (DT_PROP(DT_DRV_INST(0), automouse_layer))
-#if AUTOMOUSE_LAYER > 0
-    struct k_timer automouse_layer_timer;
-    static bool automouse_triggered = false;
 
-    static void activate_automouse_layer() {
-        automouse_triggered = true;
-        zmk_keymap_layer_activate(AUTOMOUSE_LAYER);
-        k_timer_start(&automouse_layer_timer, K_MSEC(CONFIG_ZMK_PIMORONI_PIM447_AUTOMOUSE_TIMEOUT_MS), K_NO_WAIT);
-    }
-
-    static void deactivate_automouse_layer(struct k_timer *timer) {
-        automouse_triggered = false;
-        zmk_keymap_layer_deactivate(AUTOMOUSE_LAYER);
-    }
-
-    K_TIMER_DEFINE(automouse_layer_timer, deactivate_automouse_layer, NULL);
-#endif
 
 static const struct pimoroni_pim447_config pimoroni_pim447_config = {
     .i2c = I2C_DT_SPEC_INST_GET(0),
