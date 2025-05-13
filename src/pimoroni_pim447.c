@@ -366,6 +366,12 @@ static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio
     k_work_submit(&data->irq_work);
 }
 
+static void pimoroni_pim447_timer_handler(struct k_timer *timer)
+{
+    struct pimoroni_pim447_data *data = CONTAINER_OF(timer, struct pimoroni_pim447_data, report_timer);
+    k_work_submit(&data->irq_work);
+}
+
 /* Function to enable or disable interrupt output */
 static int pimoroni_pim447_enable_interrupt(const struct pimoroni_pim447_config *config, bool enable)
 {
@@ -545,6 +551,9 @@ static int pimoroni_pim447_init(const struct device *dev)
     }
 
     k_work_init(&data->irq_work, pimoroni_pim447_work_handler);
+
+    k_timer_init(&data->report_timer, pimoroni_pim447_timer_handler, NULL);
+    k_timer_start(&data->report_timer, K_SECONDS(10), K_SECONDS(10));
 
     LOG_INF("PIM447 driver initialized");
 
