@@ -369,6 +369,14 @@ static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio
 static void pimoroni_pim447_timer_handler(struct k_timer *timer)
 {
     struct pimoroni_pim447_data *data = CONTAINER_OF(timer, struct pimoroni_pim447_data, report_timer);
+
+    uint32_t current_time = k_uptime_get();
+
+    k_mutex_lock(&data->data_lock, K_NO_WAIT);
+    data->previous_interrupt_time = data->last_interrupt_time;
+    data->last_interrupt_time = current_time;
+    k_mutex_unlock(&data->data_lock);
+
     k_work_submit(&data->irq_work);
 }
 
