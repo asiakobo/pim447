@@ -169,6 +169,8 @@ static void pim447_process_movement(struct pimoroni_pim447_data *data, int delta
     atomic_add(&data->x_buffer, delta_x);
     atomic_add(&data->y_buffer, delta_y);
 
+    LOG_DBG("raw delta_x, delta_y: %d %d", delta_x, delta_y);
+
     int scaled_x_movement = (int)(delta_x * scaling_factor);
     int scaled_y_movement = (int)(delta_y * scaling_factor);
 
