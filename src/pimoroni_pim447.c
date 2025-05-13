@@ -156,7 +156,7 @@ static void pim447_process_movement(struct pimoroni_pim447_data *data, int delta
     {
         // Exponential scaling calculation
         float exponent = -3.0f * (float)time_between_interrupts / max_time; // Adjust -3.0f for desired curve
-        scaling_factor = 1.0f + (max_speed - 1.0f) * expf(exponent);
+        scaling_factor = 2.0f + (max_speed - 2.0f) * expf(exponent);
     }
 
     // Apply scaling based on mode
