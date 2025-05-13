@@ -22,7 +22,6 @@ volatile uint8_t PIM447_MOUSE_MAX_TIME = 5;
 volatile float PIM447_MOUSE_SMOOTHING_FACTOR = 1.3f;
 volatile uint8_t PIM447_SCROLL_MAX_SPEED = 1;
 volatile uint8_t PIM447_SCROLL_MAX_TIME = 1;
-volatile uint32_t PIM447_POLLING_INTERVAL_MS = 240;
 volatile float PIM447_SCROLL_SMOOTHING_FACTOR = 0.5f;
 volatile float PIM447_HUE_INCREMENT_FACTOR = 0.3f;
 
@@ -48,7 +47,7 @@ static void activate_automouse_layer()
 {
     automouse_triggered = true;
     zmk_keymap_layer_activate(AUTOMOUSE_LAYER);
-    k_timer_start(&automouse_layer_timer, K_MSEC(CONFIG_ZMK_PIMORONI_PIM447_AUTOMOUSE_TIMEOUT_MS), K_NO_WAIT);
+    k_timer_start(&automouse_layer_timer, K_MSEC(CONFIG_PIMORONI_PIM447_AUTOMOUSE_TIMEOUT_MS), K_NO_WAIT);
 }
 
 static void deactivate_automouse_layer(struct k_timer *timer)
@@ -554,7 +553,7 @@ static int pimoroni_pim447_init(const struct device *dev)
     k_work_init(&data->irq_work, pimoroni_pim447_work_handler);
 
     k_timer_init(&data->report_timer, pimoroni_pim447_timer_handler, NULL);
-    k_timer_start(&data->report_timer, K_MSEC(PIM447_POLLING_INTERVAL_MS), K_MSEC(PIM447_POLLING_INTERVAL_MS));
+    k_timer_start(&data->report_timer, K_MSEC(CONFIG_PIMORONI_PIM447_POLLING_INTERVAL_MS), K_MSEC(CONFIG_PIMORONI_PIM447_POLLING_INTERVAL_MS));
 
     LOG_INF("PIM447 driver initialized");
 

@@ -10,9 +10,11 @@ config ZMK_PIMORONI_PIM447
 
 if ZMK_PIMORONI_PIM447
 
-  config ZMK_PIMORONI_PIM447_AUTOMOUSE_TIMEOUT_MS
+  config PIMORONI_PIM447_AUTOMOUSE_TIMEOUT_MS
     int "Amount of milliseconds the mouse layer will be active after using the trackball"
     default 400
-
+  config PIMORONI_PIM447_POLLING_INTERVAL_MS
+    int "Amount of miliiseconds the mouse polling interval"
+    default 120
 
 endif # ZMK_PIMORONI_PIM447
