@@ -16,10 +16,7 @@ if ZMK_PIMORONI_PIM447
   config PIMORONI_PIM447_POLLING_INTERVAL_MS
     int "Amount of miliiseconds the mouse polling interval"
     default 120
-  config PIMORONI_PIM447_MOUSE_MAX_SPEED
-    int "Amount of scaling speed"
-    default 50
-  config PIMORONI_PIM447_MOUSE_MAX_TIME
-    int "Amount of milliseconds the mouse max time"
-    default 25
+  config PIMORONI_PIM447_SCALE
+    int "Amount of scaling factor"
+    default 5
 endif # ZMK_PIMORONI_PIM447

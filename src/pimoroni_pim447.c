@@ -17,8 +17,6 @@
 
 LOG_MODULE_REGISTER(pimoroni_pim447, LOG_LEVEL_DBG);
 
-volatile uint8_t PIM447_MOUSE_MAX_SPEED = CONFIG_PIMORONI_PIM447_MOUSE_MAX_SPEED;
-volatile uint8_t PIM447_MOUSE_MAX_TIME = CONFIG_PIMORONI_PIM447_MOUSE_MAX_TIME;
 volatile float PIM447_MOUSE_SMOOTHING_FACTOR = 1.3f;
 volatile uint8_t PIM447_SCROLL_MAX_SPEED = 1;
 volatile uint8_t PIM447_SCROLL_MAX_TIME = 1;
@@ -32,15 +30,12 @@ enum pim447_mode
 };
 
 static enum pim447_mode current_mode = PIM447_MODE_MOUSE;
+#define AUTOMOUSE_LAYER DT_PROP_OR(DT_DRV_INST(0), automouse_layer, 0)
 
 /* Forward declaration of functions */
 static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins);
 static int pimoroni_pim447_enable_interrupt(const struct pimoroni_pim447_config *config, bool enable);
 
-static int previous_x = 0;
-static int previous_y = 0;
-
-#define AUTOMOUSE_LAYER (DT_PROP(DT_DRV_INST(0), automouse_layer))
 struct k_timer automouse_layer_timer;
 static bool automouse_triggered = false;
 static void activate_automouse_layer()
@@ -149,16 +144,8 @@ static int activity_state_changed_handler(const zmk_event_t *eh)
 ZMK_LISTENER(idle_listener, activity_state_changed_handler);
 ZMK_SUBSCRIPTION(idle_listener, zmk_activity_state_changed);
 
-static void pim447_process_movement(struct pimoroni_pim447_data *data, int delta_x, int delta_y, uint32_t time_between_interrupts, int max_speed, int max_time, float smoothing_factor)
+static void pim447_process_movement(struct pimoroni_pim447_data *data, int delta_x, int delta_y, float scaling_factor, float smoothing_factor)
 {
-    float scaling_factor = 1.0f;
-    if (time_between_interrupts < max_time)
-    {
-        // Exponential scaling calculation
-        float exponent = -3.0f * (float)time_between_interrupts / max_time; // Adjust -3.0f for desired curve
-        scaling_factor = 1.0f + (max_speed - 1.0f) * expf(exponent);
-    }
-
     // Apply scaling based on mode
     if (current_mode == PIM447_MODE_SCROLL)
     {
@@ -171,12 +158,12 @@ static void pim447_process_movement(struct pimoroni_pim447_data *data, int delta
 
     LOG_DBG("raw delta_x, delta_y: %d %d", delta_x, delta_y);
 
-    int scaled_x_movement = (int)(delta_x * scaling_factor);
-    int scaled_y_movement = (int)(delta_y * scaling_factor);
+    int scaled_x_movement = (int)(delta_x * delta_x * scaling_factor * 128) >> 7;
+    int scaled_y_movement = (int)(delta_y * delta_x * scaling_factor * 128) >> 7;
 
     // Apply smoothing
-    data->smoothed_x = (int)(smoothing_factor * scaled_x_movement + (1.0f - smoothing_factor) * previous_x);
-    data->smoothed_y = (int)(smoothing_factor * scaled_y_movement + (1.0f - smoothing_factor) * previous_y);
+    data->smoothed_x = (int)(smoothing_factor * scaled_x_movement + (1.0f - smoothing_factor) * data->previous_x);
+    data->smoothed_y = (int)(smoothing_factor * scaled_y_movement + (1.0f - smoothing_factor) * data->previous_y);
 
     data->previous_x = data->smoothed_x;
     data->previous_y = data->smoothed_y;
@@ -215,7 +202,7 @@ static void pimoroni_pim447_work_handler(struct k_work *work)
     {
         if (current_mode == PIM447_MODE_MOUSE)
         {
-            pim447_process_movement(data, delta_x, delta_y, time_between_interrupts, PIM447_MOUSE_MAX_SPEED, PIM447_MOUSE_MAX_TIME, PIM447_MOUSE_SMOOTHING_FACTOR);
+            pim447_process_movement(data, delta_x, delta_y, CONFIG_PIMORONI_PIM447_SCALE, PIM447_MOUSE_SMOOTHING_FACTOR);
 
             /* Report relative X movement */
             if (delta_x != 0)
@@ -247,7 +234,7 @@ static void pimoroni_pim447_work_handler(struct k_work *work)
         }
         else if (current_mode == PIM447_MODE_SCROLL)
         {
-            pim447_process_movement(data, delta_x, delta_y, time_between_interrupts, PIM447_SCROLL_MAX_SPEED, PIM447_SCROLL_MAX_TIME, PIM447_SCROLL_SMOOTHING_FACTOR);
+            pim447_process_movement(data, delta_x, delta_y, CONFIG_PIMORONI_PIM447_SCALE, PIM447_SCROLL_SMOOTHING_FACTOR);
 
             /* Report relative X movement */
             if (delta_x != 0)
