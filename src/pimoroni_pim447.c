@@ -362,17 +362,17 @@ static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio
 
     // if (pins & BIT(config->int_gpio.pin))
     //{
-    int value = gpio_pin_get(config->int_gpio.port, config->int_gpio.pin);
-    LOG_DBG("Toggle state:value %d", value);
+    //int value = gpio_pin_get(config->int_gpio.port, config->int_gpio.pin);
+    //LOG_DBG("Toggle state:value %d", value);
 
-    if (value == 0)
-    {
-        pim447_toggle_mode();
-    }
-    else
-    {
-        pim447_toggle_mode();
-    }
+    // if (value == 0)
+    // {
+    //     pim447_toggle_mode();
+    // }
+    // else
+    // {
+    //     pim447_toggle_mode();
+    // }
     //}
 }
 
