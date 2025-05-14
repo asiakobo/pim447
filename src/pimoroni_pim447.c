@@ -358,21 +358,21 @@ static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio
     // k_work_submit(&data->irq_work);
 
     const struct pimoroni_pim447_config *config = port->config;
-    LOG_DBG("GPIO callback fired. Pins: 0x%08X, expected bit: 0x%08X", pins, BIT(config->int_gpio.pin));
+    LOG_DBG("GPIO callback fired. Pins: 0x%08X, %d expected bit: 0x%08X", pins, config->int_gpio.pin, BIT(config->int_gpio.pin));
 
-    //if (pins & BIT(config->int_gpio.pin))
+    // if (pins & BIT(config->int_gpio.pin))
     //{
-        int value = gpio_pin_get(config->int_gpio.port, config->int_gpio.pin);
-        LOG_DBG("Toggle state:value %d", value);
+    int value = gpio_pin_get(config->int_gpio.port, config->int_gpio.pin);
+    LOG_DBG("Toggle state:value %d", value);
 
-        if (value == 0)
-        {
-            pim447_toggle_mode();
-        }
-        else
-        {
-            pim447_toggle_mode();
-        }
+    if (value == 0)
+    {
+        pim447_toggle_mode();
+    }
+    else
+    {
+        pim447_toggle_mode();
+    }
     //}
 }
 
