@@ -360,8 +360,8 @@ static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio
     const struct pimoroni_pim447_config *config = port->config;
     LOG_DBG("GPIO callback fired. Pins: 0x%08X, expected bit: 0x%08X", pins, BIT(config->int_gpio.pin));
 
-    if (pins & BIT(config->int_gpio.pin))
-    {
+    //if (pins & BIT(config->int_gpio.pin))
+    //{
         int value = gpio_pin_get(config->int_gpio.port, config->int_gpio.pin);
         LOG_DBG("Toggle state:value %d", value);
 
@@ -373,7 +373,7 @@ static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio
         {
             pim447_toggle_mode();
         }
-    }
+    //}
 }
 
 static void pimoroni_pim447_timer_handler(struct k_timer *timer)
@@ -452,7 +452,7 @@ static int pimoroni_pim447_enable(const struct device *dev)
         LOG_ERR("Failed to configure interrupt GPIO");
         return ret;
     }
-    LOG_DBG("Configured GPIO pin: %d, bitmask: 0x%08X", config->int_gpio.pin, BIT(config->int_gpio.pin));
+    LOG_INF("Configured GPIO pin: %d, bitmask: 0x%08X", config->int_gpio.pin, BIT(config->int_gpio.pin));
 
     /* Configure the GPIO interrupt for both edge (active low) */
     ret = gpio_pin_interrupt_configure_dt(&config->int_gpio, GPIO_INT_EDGE_BOTH);
