@@ -347,17 +347,30 @@ static void pimoroni_pim447_work_handler(struct k_work *work)
 /* GPIO callback function */
 static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins)
 {
-    struct pimoroni_pim447_data *data = CONTAINER_OF(cb, struct pimoroni_pim447_data, int_gpio_cb);
+    // struct pimoroni_pim447_data *data = CONTAINER_OF(cb, struct pimoroni_pim447_data, int_gpio_cb);
+    // uint32_t current_time = k_uptime_get();
+    // k_mutex_lock(&data->data_lock, K_NO_WAIT);
+    // data->previous_interrupt_time = data->last_interrupt_time;
+    // data->last_interrupt_time = current_time;
+    // k_mutex_unlock(&data->data_lock);
 
-    uint32_t current_time = k_uptime_get();
+    // /* Schedule the work item to handle the interrupt in thread context */
+    // k_work_submit(&data->irq_work);
 
-    k_mutex_lock(&data->data_lock, K_NO_WAIT);
-    data->previous_interrupt_time = data->last_interrupt_time;
-    data->last_interrupt_time = current_time;
-    k_mutex_unlock(&data->data_lock);
+    const struct pimoroni_pim447_config *config = port->config;
 
-    /* Schedule the work item to handle the interrupt in thread context */
-    k_work_submit(&data->irq_work);
+    if (pins & BIT(config->int_gpio.pin))
+    {
+        int value = gpio_pin_get(config->int_gpio.port, config->int_gpio.pin);
+        if (value == 0)
+        {
+            pim447_toggle_mode();
+        }
+        else
+        {
+            pim447_toggle_mode();
+        }
+    }
 }
 
 static void pimoroni_pim447_timer_handler(struct k_timer *timer)
@@ -437,8 +450,8 @@ static int pimoroni_pim447_enable(const struct device *dev)
         return ret;
     }
 
-    /* Configure the GPIO interrupt for falling edge (active low) */
-    ret = gpio_pin_interrupt_configure_dt(&config->int_gpio, GPIO_INT_EDGE_FALLING);
+    /* Configure the GPIO interrupt for both edge (active low) */
+    ret = gpio_pin_interrupt_configure_dt(&config->int_gpio, GPIO_INT_EDGE_BOTH);
     if (ret)
     {
         LOG_ERR("Failed to configure GPIO interrupt");
@@ -460,8 +473,8 @@ static int pimoroni_pim447_enable(const struct device *dev)
         LOG_INF("GPIO callback added successfully");
     }
 
-    /* Enable interrupt output on the trackball */
-    ret = pimoroni_pim447_enable_interrupt(config, true);
+    /* Enable interrupt output on the trackball (default false)*/
+    ret = pimoroni_pim447_enable_interrupt(config, false);
     if (ret)
     {
         LOG_ERR("Failed to enable interrupt output");
@@ -564,7 +577,7 @@ static int pimoroni_pim447_init(const struct device *dev)
 
 static const struct pimoroni_pim447_config pimoroni_pim447_config = {
     .i2c = I2C_DT_SPEC_INST_GET(0),
-    .int_gpio = GPIO_DT_SPEC_INST_GET(0, int_gpios),
+    .int_gpio = GPIO_DT_SPEC_INST_GET_BY_IDX(0, int_gpios, 0),
 };
 
 static struct pimoroni_pim447_data pimoroni_pim447_data;
