@@ -182,7 +182,7 @@ static void pimoroni_pim447_work_handler(struct k_work *work)
     uint8_t buf[5];
     int ret;
 
-    LOG_INF("PIM447 work handler triggered");
+    // LOG_INF("PIM447 work handler triggered");
 
     /* Read movement data and switch state */
     ret = i2c_burst_read_dt(&config->i2c, REG_LEFT, buf, 5);
