@@ -358,7 +358,7 @@ static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio
     // k_work_submit(&data->irq_work);
 
     const struct pimoroni_pim447_config *config = port->config;
-    LOG_DBG("GPIO callback fired. Pins: 0x%08X, %d expected bit: 0x%08X", pins, config->int_gpio.pin, BIT(config->int_gpio.pin));
+    LOG_DBG("GPIO callback fired. Pins: 0x%08lX, %d expected bit: 0x%08lX", pins, config->int_gpio.pin, BIT(config->int_gpio.pin));
 
     // if (pins & BIT(config->int_gpio.pin))
     //{
@@ -452,7 +452,7 @@ static int pimoroni_pim447_enable(const struct device *dev)
         LOG_ERR("Failed to configure interrupt GPIO");
         return ret;
     }
-    LOG_INF("Configured GPIO pin: %d, bitmask: 0x%08X", config->int_gpio.pin, BIT(config->int_gpio.pin));
+    LOG_INF("Configured GPIO pin: %d, bitmask: 0x%08lX", config->int_gpio.pin, BIT(config->int_gpio.pin));
 
     /* Configure the GPIO interrupt for both edge (active low) */
     ret = gpio_pin_interrupt_configure_dt(&config->int_gpio, GPIO_INT_EDGE_BOTH);
