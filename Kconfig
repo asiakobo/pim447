@@ -1,4 +1,4 @@
-# 2024 t0bybr
+# 2024 t0bybr & asiacobo
 
 config ZMK_PIMORONI_PIM447
   bool "Pimoroni PIM447 Trackball support"

@@ -356,6 +356,7 @@ static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio
 
     // /* Schedule the work item to handle the interrupt in thread context */
     // k_work_submit(&data->irq_work);
+    LOG_DBG("Toggle state: ");
 
     const struct pimoroni_pim447_config *config = port->config;
 
