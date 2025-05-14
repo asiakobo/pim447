@@ -18,6 +18,7 @@
 LOG_MODULE_REGISTER(pimoroni_pim447, LOG_LEVEL_DBG);
 
 volatile float PIM447_MOUSE_SMOOTHING_FACTOR = 1.3f;
+volatile float PIM447_SCALE_FACTOR = (float)CONFIG_PIMORONI_PIM447_SCALE;
 volatile uint8_t PIM447_SCROLL_MAX_SPEED = 1;
 volatile uint8_t PIM447_SCROLL_MAX_TIME = 1;
 volatile float PIM447_SCROLL_SMOOTHING_FACTOR = 0.5f;
@@ -144,8 +145,9 @@ static int activity_state_changed_handler(const zmk_event_t *eh)
 ZMK_LISTENER(idle_listener, activity_state_changed_handler);
 ZMK_SUBSCRIPTION(idle_listener, zmk_activity_state_changed);
 
-static void pim447_process_movement(struct pimoroni_pim447_data *data, int delta_x, int delta_y, float scaling_factor, float smoothing_factor)
+static void pim447_process_movement(struct pimoroni_pim447_data *data, int delta_x, int delta_y, float smoothing_factor)
 {
+    float scaling_factor = PIM447_SCALE_FACTOR;
     // Apply scaling based on mode
     if (current_mode == PIM447_MODE_SCROLL)
     {
@@ -202,7 +204,7 @@ static void pimoroni_pim447_work_handler(struct k_work *work)
     {
         if (current_mode == PIM447_MODE_MOUSE)
         {
-            pim447_process_movement(data, delta_x, delta_y, CONFIG_PIMORONI_PIM447_SCALE, PIM447_MOUSE_SMOOTHING_FACTOR);
+            pim447_process_movement(data, delta_x, delta_y, PIM447_MOUSE_SMOOTHING_FACTOR);
 
             /* Report relative X movement */
             if (delta_x != 0)
@@ -234,7 +236,7 @@ static void pimoroni_pim447_work_handler(struct k_work *work)
         }
         else if (current_mode == PIM447_MODE_SCROLL)
         {
-            pim447_process_movement(data, delta_x, delta_y, CONFIG_PIMORONI_PIM447_SCALE, PIM447_SCROLL_SMOOTHING_FACTOR);
+            pim447_process_movement(data, delta_x, delta_y, PIM447_SCROLL_SMOOTHING_FACTOR);
 
             /* Report relative X movement */
             if (delta_x != 0)
