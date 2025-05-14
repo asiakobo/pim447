@@ -358,6 +358,7 @@ static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio
     // k_work_submit(&data->irq_work);
 
     const struct pimoroni_pim447_config *config = port->config;
+    LOG_DBG("GPIO callback fired. Pins: 0x%08X, expected bit: 0x%08X", pins, BIT(config->int_gpio.pin));
 
     if (pins & BIT(config->int_gpio.pin))
     {
