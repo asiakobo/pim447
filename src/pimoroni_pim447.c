@@ -161,7 +161,7 @@ static void pim447_process_movement(struct pimoroni_pim447_data *data, int delta
     LOG_DBG("raw delta_x, delta_y: %d %d", delta_x, delta_y);
 
     int scaled_x_movement = (int)(delta_x * delta_x * scaling_factor * 128) >> 7;
-    int scaled_y_movement = (int)(delta_y * delta_x * scaling_factor * 128) >> 7;
+    int scaled_y_movement = (int)(delta_y * delta_y * scaling_factor * 128) >> 7;
 
     // Apply smoothing
     data->smoothed_x = (int)(smoothing_factor * scaled_x_movement + (1.0f - smoothing_factor) * data->previous_x);
