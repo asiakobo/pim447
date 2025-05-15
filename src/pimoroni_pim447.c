@@ -245,7 +245,7 @@ static void pimoroni_pim447_work_handler(struct k_work *work)
             /* Report relative X movement */
             if (delta_x != 0)
             {
-                ret = input_report_rel(data->dev, INPUT_REL_WHEEL, data->smoothed_x, true, K_NO_WAIT);
+                ret = input_report_rel(data->dev, INPUT_REL_HWHEEL, data->smoothed_x, true, K_NO_WAIT);
                 if (ret)
                 {
                     LOG_ERR("Failed to report delta_x: %d", ret);
@@ -259,7 +259,7 @@ static void pimoroni_pim447_work_handler(struct k_work *work)
             /* Report relative Y movement */
             if (delta_y != 0)
             {
-                ret = input_report_rel(data->dev, INPUT_REL_HWHEEL, data->smoothed_y, true, K_NO_WAIT);
+                ret = input_report_rel(data->dev, INPUT_REL_WHEEL, data->smoothed_y, true, K_NO_WAIT);
                 if (ret)
                 {
                     LOG_ERR("Failed to report delta_y: %d", ret);
