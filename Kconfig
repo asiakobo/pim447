@@ -9,14 +9,17 @@ config ZMK_PIM447
     Enable driver for Pimoroni  Trackball.
 
 if ZMK_PIM447
-  config PIMORONI_PIM447_AUTOMOUSE_TIMEOUT_MS
+  config ZMK_PIM447_AUTOMOUSE_TIMEOUT_MS
     int "Amount of milliseconds the mouse layer will be active after using the trackball"
     default 400
-  config PIMORONI_PIM447_POLLING_INTERVAL_MS
+  config ZMK_PIM447_POLLING_INTERVAL_MS
     int "Amount of miliiseconds the mouse polling interval"
     default 120
-  config PIMORONI_PIM447_SCALE
+  config ZMK_PIM447_SCALE
     int "Amount of scaling factor"
+    default 5
+  config ZMK_PIM447_SCALE_SCROLL
+    int "Amount of scaling factor for scrolling"
     default 5
   config ZMK_PIM447_BEHAVIORS
     bool "Enable Pimoroni PIM447 Trackball Actions behavior"
