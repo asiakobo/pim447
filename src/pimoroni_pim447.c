@@ -122,7 +122,7 @@ static int activity_state_changed_handler(const zmk_event_t *eh)
     struct zmk_activity_state_changed *ev = as_zmk_activity_state_changed(eh);
 
     // Get the device pointer
-    const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(pimoroni_pim447));
+    const struct device *dev = DEVICE_DT_GET(DT_INST(0, zmk_pimoroni_pim447));
     if (!device_is_ready(dev))
     {
         LOG_ERR("PIM447 device not ready");
