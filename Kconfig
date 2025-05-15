@@ -20,7 +20,7 @@ if ZMK_PIM447
     default 5
   config ZMK_PIM447_SCALE_SCROLL
     int "Amount of scaling factor for scrolling"
-    default 5
+    default 2
   config ZMK_PIM447_BEHAVIORS
     bool "Enable Pimoroni PIM447 Trackball Actions behavior"
     depends on ZMK_PIM447
