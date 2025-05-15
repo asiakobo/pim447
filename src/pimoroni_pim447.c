@@ -9,6 +9,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zmk/keymap.h>
 #include <zmk/events/activity_state_changed.h>
 #include <math.h>
 
