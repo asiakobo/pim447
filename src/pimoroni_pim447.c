@@ -258,14 +258,15 @@ static void pimoroni_pim447_work_handler(struct k_work *work)
             /* Report relative Y movement */
             if (delta_y != 0)
             {
-                ret = input_report_rel(data->dev, INPUT_REL_WHEEL, data->smoothed_y, true, K_NO_WAIT);
+                int reverse_y = -1 * data->smoothed_y;
+                ret = input_report_rel(data->dev, INPUT_REL_WHEEL, reverse_y, true, K_NO_WAIT);
                 if (ret)
                 {
                     LOG_ERR("Failed to report delta_y: %d", ret);
                 }
                 else
                 {
-                    LOG_DBG("Reported delta_y: %d", data->smoothed_y);
+                    LOG_DBG("Reported delta_y: %d", reverse_y);
                 }
             }
         }
