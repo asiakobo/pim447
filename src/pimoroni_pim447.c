@@ -150,7 +150,7 @@ static void pim447_process_movement(struct pimoroni_pim447_data *data, int delta
     // Apply scaling based on mode
     if (current_mode == PIM447_MODE_SCROLL)
     {
-        scaling_factor *= 2.0f; // Example: Increase scaling for scroll mode
+        scaling_factor *= 1.3f; // Example: Increase scaling for scroll mode
     }
 
     /* Accumulate deltas atomically */
