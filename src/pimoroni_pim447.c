@@ -243,14 +243,15 @@ static void pimoroni_pim447_work_handler(struct k_work *work)
             /* Report relative X movement */
             if (delta_x != 0)
             {
-                ret = input_report_rel(data->dev, INPUT_REL_HWHEEL, data->smoothed_x, true, K_NO_WAIT);
+                int reverse_x = -1 * data->smoothed_x;
+                ret = input_report_rel(data->dev, INPUT_REL_HWHEEL, reverse_x, true, K_NO_WAIT);
                 if (ret)
                 {
                     LOG_ERR("Failed to report delta_x: %d", ret);
                 }
                 else
                 {
-                    LOG_DBG("Reported delta_x: %d", data->smoothed_x);
+                    LOG_DBG("Reported delta_x: %d", reverse_x);
                 }
             }
 
@@ -430,7 +431,6 @@ static int pimoroni_pim447_enable(const struct device *dev)
         LOG_ERR("Failed to configure interrupt GPIO");
         return ret;
     }
-    LOG_INF("Configured GPIO pin: %d, bitmask: 0x%08X", config->int_gpio.pin, BIT(config->int_gpio.pin));
 
     /* Configure the GPIO interrupt for both edge (active low) */
     ret = gpio_pin_interrupt_configure_dt(&config->int_gpio, GPIO_INT_EDGE_BOTH);
