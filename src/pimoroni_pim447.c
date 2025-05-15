@@ -20,7 +20,7 @@ LOG_MODULE_REGISTER(zmk_pimoroni_pim447, LOG_LEVEL_DBG);
 
 volatile float PIM447_MOUSE_SMOOTHING_FACTOR = 1.3f;
 volatile float PIM447_SCALE_FACTOR = (float)CONFIG_PIMORONI_PIM447_SCALE;
-volatile float PIM447_SCROLL_SMOOTHING_FACTOR = 0.5f;
+volatile float PIM447_SCROLL_SMOOTHING_FACTOR = 1.0f;
 volatile float PIM447_HUE_INCREMENT_FACTOR = 0.3f;
 
 enum pim447_mode
