@@ -22,8 +22,6 @@ LOG_MODULE_REGISTER(zmk_behavior_pim447, CONFIG_ZMK_LOG_LEVEL);
 #include "dt-bindings/behavior_pim447.h"
 
 /* Extern variables */
-extern volatile uint8_t PIM447_MOUSE_MAX_SPEED;
-extern volatile uint8_t PIM447_MOUSE_MAX_TIME;
 extern volatile float PIM447_MOUSE_SMOOTHING_FACTOR;
 extern volatile uint8_t PIM447_SCROLL_MAX_SPEED;
 extern volatile uint8_t PIM447_SCROLL_MAX_TIME;
@@ -52,46 +50,7 @@ static int behavior_pim447_binding_pressed(struct zmk_behavior_binding *binding,
     k_mutex_lock(&variable_mutex, K_FOREVER);
 
     switch (action) {
-        case PIM447_MOUSE_INC_MAX_SPEED:
-            PIM447_MOUSE_MAX_SPEED += PIM447_MAX_SPEED_STEP; // Increment max speed
-            LOG_DBG("Mouse max speed increased to %d", PIM447_MOUSE_MAX_SPEED);
-            break;
-        case PIM447_MOUSE_DEC_MAX_SPEED:
-            if (PIM447_MOUSE_MAX_SPEED > 1) {
-                PIM447_MOUSE_MAX_SPEED -= PIM447_MAX_SPEED_STEP; // Decrement max speed
-                LOG_DBG("Mouse max speed decreased to %d", PIM447_MOUSE_MAX_SPEED);
-            }
-            break;
-        case PIM447_SCROLL_INC_MAX_SPEED:
-            PIM447_SCROLL_MAX_SPEED += PIM447_MAX_SPEED_STEP; // Increment max speed
-            LOG_DBG("Scroll max speed increased to %d", PIM447_SCROLL_MAX_SPEED);
-            break;
-        case PIM447_SCROLL_DEC_MAX_SPEED:
-            if (PIM447_SCROLL_MAX_SPEED > 1) {
-                PIM447_SCROLL_MAX_SPEED -= PIM447_MAX_SPEED_STEP; // Decrement max speed
-                LOG_DBG("Scroll max speed decreased to %d", PIM447_SCROLL_MAX_SPEED);
-            }
-            break;
-        case PIM447_MOUSE_INC_MAX_TIME:
-            PIM447_MOUSE_MAX_TIME += PIM447_MAX_TIME_STEP; // Increment max TIME
-            LOG_DBG("Mouse max time increased to %d", PIM447_MOUSE_MAX_TIME);
-            break;
-        case PIM447_MOUSE_DEC_MAX_TIME:
-            if (PIM447_MOUSE_MAX_TIME > 5) {
-                PIM447_MOUSE_MAX_TIME -= PIM447_MAX_TIME_STEP; // Decrement max TIME
-                LOG_DBG("Mouse max time decreased to %d", PIM447_MOUSE_MAX_TIME);
-            }
-            break;
-        case PIM447_SCROLL_INC_MAX_TIME:
-            PIM447_MOUSE_MAX_TIME += PIM447_MAX_TIME_STEP; // Increment max TIME
-            LOG_DBG("Scroll max time increased to %d", PIM447_MOUSE_MAX_TIME);
-            break;
-        case PIM447_SCROLL_DEC_MAX_TIME:
-            if (PIM447_MOUSE_MAX_TIME > 5) {
-                PIM447_MOUSE_MAX_TIME -= PIM447_MAX_TIME_STEP; // Decrement max TIME
-                LOG_DBG("Scroll max time decreased to %d", PIM447_MOUSE_MAX_TIME);
-            }
-            break;
+      
         case PIM447_MOUSE_INC_SMOOTHING_FACTOR:
             PIM447_MOUSE_SMOOTHING_FACTOR += PIM447_SMOOTHING_FACTOR_STEP; // Increment Smoothing factor
             LOG_DBG("Mouse Smoothing factor increased to %d.%02d", (int)PIM447_MOUSE_SMOOTHING_FACTOR, (int)(PIM447_MOUSE_SMOOTHING_FACTOR * 100) % 100);
