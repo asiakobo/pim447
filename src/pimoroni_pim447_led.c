@@ -9,7 +9,7 @@
 #include "pimoroni_pim447.h"      // For shared data structures
 #include "pimoroni_pim447_led.h"  // For function declarations
 
-LOG_MODULE_DECLARE(pimoroni_pim447, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(zmk_pimoroni_pim447, LOG_LEVEL_DBG);
 
 /**
  * @brief Set the brightness of an LED.
