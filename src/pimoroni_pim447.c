@@ -20,8 +20,6 @@ LOG_MODULE_REGISTER(zmk_pimoroni_pim447, LOG_LEVEL_DBG);
 
 volatile float PIM447_MOUSE_SMOOTHING_FACTOR = 1.3f;
 volatile float PIM447_SCALE_FACTOR = (float)CONFIG_PIMORONI_PIM447_SCALE;
-volatile uint8_t PIM447_SCROLL_MAX_SPEED = 1;
-volatile uint8_t PIM447_SCROLL_MAX_TIME = 1;
 volatile float PIM447_SCROLL_SMOOTHING_FACTOR = 0.5f;
 volatile float PIM447_HUE_INCREMENT_FACTOR = 0.3f;
 
@@ -152,7 +150,7 @@ static void pim447_process_movement(struct pimoroni_pim447_data *data, int delta
     // Apply scaling based on mode
     if (current_mode == PIM447_MODE_SCROLL)
     {
-        scaling_factor *= 2.5f; // Example: Increase scaling for scroll mode
+        scaling_factor *= 2.0f; // Example: Increase scaling for scroll mode
     }
 
     /* Accumulate deltas atomically */
@@ -348,46 +346,25 @@ static void pimoroni_pim447_work_handler(struct k_work *work)
 /* GPIO callback function */
 static void pimoroni_pim447_gpio_callback(const struct device *port, struct gpio_callback *cb, gpio_port_pins_t pins)
 {
-    // struct pimoroni_pim447_data *data = CONTAINER_OF(cb, struct pimoroni_pim447_data, int_gpio_cb);
-    // uint32_t current_time = k_uptime_get();
-    // k_mutex_lock(&data->data_lock, K_NO_WAIT);
-    // data->previous_interrupt_time = data->last_interrupt_time;
-    // data->last_interrupt_time = current_time;
-    // k_mutex_unlock(&data->data_lock);
-
-    // /* Schedule the work item to handle the interrupt in thread context */
-    // k_work_submit(&data->irq_work);
-
-    const struct pimoroni_pim447_config *config = port->config;
-    LOG_DBG("GPIO callback fired. Pins: 0x%08X, %d expected bit: 0x%08X", (unsigned int)pins, config->int_gpio.pin, (unsigned int)BIT(config->int_gpio.pin));
-
-    // if (pins & BIT(config->int_gpio.pin))
-    //{
-    // int value = gpio_pin_get(config->int_gpio.port, config->int_gpio.pin);
-    // LOG_DBG("Toggle state:value %d", value);
-
-    // if (value == 0)
-    // {
-    //     pim447_toggle_mode();
-    // }
-    // else
-    // {
-    //     pim447_toggle_mode();
-    // }
-    //}
+    struct pimoroni_pim447_data *data = CONTAINER_OF(cb, struct pimoroni_pim447_data, int_gpio_cb);
+    uint32_t current_time = k_uptime_get();
+    k_mutex_lock(&data->data_lock, K_NO_WAIT);
+    data->previous_interrupt_time = data->last_interrupt_time;
+    data->last_interrupt_time = current_time;
+    k_mutex_unlock(&data->data_lock);
+    /* Schedule the work item to handle the interrupt in thread context */
+    k_work_submit(&data->irq_work);
 }
 
 static void pimoroni_pim447_timer_handler(struct k_timer *timer)
 {
     struct pimoroni_pim447_data *data = CONTAINER_OF(timer, struct pimoroni_pim447_data, report_timer);
-
     uint32_t current_time = k_uptime_get();
-
     k_mutex_lock(&data->data_lock, K_NO_WAIT);
     data->previous_interrupt_time = data->last_interrupt_time;
     data->last_interrupt_time = current_time;
     k_mutex_unlock(&data->data_lock);
-
+    /* Schedule the work item to handle polling */
     k_work_submit(&data->irq_work);
 }
 
